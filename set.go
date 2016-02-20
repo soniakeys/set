@@ -1,17 +1,6 @@
 // Copyright 2014 Sonia Keys
 // License MIT: http://opensource.org/licenses/MIT
 
-// Sets as lists of interfaces.
-//
-// Interface Element has a single method Equal.  This allows generality
-// in element types and general defintions of equality. Sets are Element
-// slices.  You lose O(1) access in comparison to maps for example, but
-// you gain this greater generality.
-//
-// Usually your application will allow something more efficent.  There are
-// packages out there for map-based sets and for bitsets, for example.
-// But just to demonstrate the possibility, here is an example of sets as
-// lists of interfaces.
 package set
 
 import (
@@ -24,8 +13,8 @@ import (
 // A type satisfying Element must implement just one method, Equal.
 // Equal returns true if the argument is to be considered equal to the
 // receiver in some sense.  For a valid implementation of Equal, the
-// functions Reflexive, Symetric, and Transitive must return true for
-// all possible receivers and arguments.
+// functions Reflexive, Symmetric, and Transitive must return true for
+// all possible element values.
 //
 // Implementations will typically type assert the argument to a value
 // of the receiver type and then perform some value comparison.
@@ -33,12 +22,48 @@ type Element interface {
 	Equal(Element) bool
 }
 
+// Refexive validates the reflexive property of the Equal method for the given
+// element value.
+//
+// The function should return true for all possible elements.
+// If it returns false, it means the element's implementation of the Equal
+// method is invalid.
+func Reflexive(e Element) bool {
+	return e.Equal(e)
+}
+
+// Symmetric validates the symmetric property of the Equal method for the given
+// element value.
+//
+// The function should return true for all possible elements.
+// If it returns false, it means the element's implementation of the Equal
+// method is invalid.
+func Symmetric(a, b Element) bool {
+	return a.Equal(b) == b.Equal(a)
+}
+
+// Transitive validates the transitive property of the Equal method for the
+// given element values.
+//
+// The function should return true for all possible elements.
+// If it returns false, it means the element's implementation of the Equal
+// method is invalid.
+func Transitive(a, b, c Element) bool {
+	if a.Equal(b) && b.Equal(c) {
+		return a.Equal(c)
+	}
+	return true
+}
+
 // Set is a type implementing the mathematical concept of a set.
+//
 // This type also implements the Element interface, so Sets can be elements
 // of Sets.
 //
 // Set implementation is an Element slice.  Sets are conceptually unordered.
 // While slices are ordered, this order in a Set must be considered irrelevant.
+// Also, while slices allow duplicate values, a Set must be maintained so that
+// Equal returns false for any pair of elements.
 type Set []Element
 
 // HasElement returns true if set s contains element e.
@@ -124,34 +149,4 @@ func (s Set) PowerSet() Set {
 		r = append(r, u...)
 	}
 	return r
-}
-
-// Refexive validates the reflexive property of the Equal method for an element.
-//
-// The function should return true for all possible elements.
-// If it returns false, it means the element's implementation of the Equal
-// method is invalid.
-func Reflexive(e Element) bool {
-	return e.Equal(e)
-}
-
-// Symetric validates the symetric property of the Equal method for an element.
-//
-// The function should return true for all possible elements.
-// If it returns false, it means the element's implementation of the Equal
-// method is invalid.
-func Symetric(a, b Element) bool {
-	return a.Equal(b) == b.Equal(a)
-}
-
-// Transitive validates the transitive property of the Equal method for an element.
-//
-// The function should return true for all possible elements.
-// If it returns false, it means the element's implementation of the Equal
-// method is invalid.
-func Transitive(a, b, c Element) bool {
-	if a.Equal(b) && b.Equal(c) {
-		return a.Equal(c)
-	}
-	return true
 }

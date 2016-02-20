@@ -24,8 +24,8 @@ func Test(t *testing.T) {
 	if !set.Reflexive(s) {
 		t.Fatal("reflexive")
 	}
-	if !set.Symetric(s, s2) {
-		t.Fatal("symetric")
+	if !set.Symmetric(s, s2) {
+		t.Fatal("symmetric")
 	}
 	s3 := set.Set{intEle(3)}
 	if !set.Transitive(s, s2, s3) {

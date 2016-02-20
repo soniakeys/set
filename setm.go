@@ -8,15 +8,11 @@ import (
 	"math/rand"
 )
 
-// SetM implements a superset of methods found in a number of popular set
-// packages:
-//   github.com/deckarep/golang-set
-//   github.com/dropbox/godropbox/container/set
-//   gopkg.in/fatih/set.v0
-//   github.com/Workiva/go-datastructures/set
-//   github.com/shopsmart/set
+// SetM is a type implementing the mathematical concept of a set.
 //
-// The SetM type is defined identically to the Set type of this package.
+// The SetM type has the same underlying type as the Set type of this package,
+// just more methods.  The M of SetM is for "more methods".
+// All rules for the Set type apply to SetM.  See Set.
 type SetM []Element
 
 // NewSetM returns a new set with the given elements.
@@ -87,6 +83,8 @@ func (r *SetM) AddV(es ...Element) bool {
 func (s SetM) Cardinality() int { return len(s) }
 
 // OrderedPair is an ordered pair of elements.
+//
+// The type is an element type used for Cartsian products.
 type OrderedPair struct {
 	a, b Element
 }
