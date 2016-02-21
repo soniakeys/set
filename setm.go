@@ -37,12 +37,10 @@ func (p *SetM) Add(e Element) bool {
 	if p.HasElement(e) {
 		return false
 	}
-	// always allocate new backing array.
-	s1 := *p
-	s2 := make(SetM, len(s1)+1)
-	copy(s2, s1)
-	s2[len(s1)] = e
-	*p = s2
+	// always allocate new backing array to avoid strange case
+	// of self-referential sets.
+	s := *p
+	*p = append(s[:len(s):len(s)], e)
 	return true
 }
 
@@ -114,7 +112,8 @@ func (s SetM) CartesianProduct(t SetM) SetM {
 
 // Clear removes all elements from the set, leaving the emtpy set.
 func (p *SetM) Clear() {
-	// truncating the slice is tempting but not safe.
+	// truncating the slice is tempting but can enable strange cases
+	// of self-referential sets.
 	*p = nil
 }
 

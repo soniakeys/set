@@ -100,12 +100,10 @@ func (s Set) Equal(e Element) bool {
 // AddElement adds a single element to a set.
 func (p *Set) AddElement(e Element) {
 	if !p.HasElement(e) {
-		// always allocate new backing array.
-		s1 := *p
-		s2 := make(Set, len(s1)+1)
-		copy(s2, s1)
-		s2[len(s1)] = e
-		*p = s2
+		// always allocate new backing array to avoid strange case
+		// of self-referential sets.
+		s := *p
+		*p = append(s[:len(s):len(s)], e)
 	}
 }
 
