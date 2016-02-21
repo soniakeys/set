@@ -28,6 +28,8 @@
 // minimal number of methods, just to show the basic mathematical concepts
 // represented and how they are implemented with a list of Elements.
 //
+// For what it's worth, the Set type has 100% test coverage.
+//
 // SetM type
 //
 // The SetM type has the same underlying type as the Set type of this package,
@@ -44,4 +46,6 @@
 // The result shows lots of capabilities, but shouldn't be taken as anything
 // like an "ultimate" set API.  It's easy to imagine more and more methods
 // but the API is awflully big as it is.  A number of the methods are trivial.
+//
+// The SetM type is yet untested.
 package set

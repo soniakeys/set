@@ -33,14 +33,14 @@ func NewSetM(es ...Element) SetM {
 // Returns true if e was added.  Returns false if e was already present.
 //
 // See SetM.AddV for a variadic version.
-func (p *SetM) Add(e Element) bool {
-	if p.HasElement(e) {
+func (r *SetM) Add(e Element) bool {
+	if r.HasElement(e) {
 		return false
 	}
 	// always allocate new backing array to avoid strange case
 	// of self-referential sets.
-	s := *p
-	*p = append(s[:len(s):len(s)], e)
+	s := *r
+	*r = append(s[:len(s):len(s)], e)
 	return true
 }
 
@@ -111,16 +111,16 @@ func (s SetM) CartesianProduct(t SetM) SetM {
 }
 
 // Clear removes all elements from the set, leaving the emtpy set.
-func (p *SetM) Clear() {
+func (r *SetM) Clear() {
 	// truncating the slice is tempting but can enable strange cases
 	// of self-referential sets.
-	*p = nil
+	*r = nil
 }
 
 // Copy returns a copy, or a clone of a set.
 //
 // The returned Set is based on a newly allocated slice.  Elements though
-// are the shared.  That is, this is a shallow copy.
+// are shared.  That is, this is a shallow copy.
 func (s SetM) Copy() SetM { return append(SetM{}, s...) }
 
 // Contains tests whether the given elements are all in the set.
@@ -141,6 +141,8 @@ func (s SetM) Contains(es ...Element) bool {
 // in t.
 //
 // See SetM.Difference2 for a different algorithm.
+//
+// See SetM.DifferenceR for a verstion that modifies the receiver.
 //
 // See SetM.DifferenceV for a variadic version.
 func (s SetM) Difference(t SetM) (d SetM) {
@@ -534,7 +536,7 @@ func (r *SetM) UnionR(t SetM) {
 	}
 }
 
-// UnionV returns a new set with elements of s or any of t.
+// UnionV returns a new set with elements of s or any of ts.
 func (s SetM) UnionV(ts ...SetM) SetM {
 	u := s.Copy()
 	for _, t := range ts {
