@@ -4,36 +4,74 @@
 package set_test
 
 import (
+	"math"
 	"testing"
+	"testing/quick"
 
 	"github.com/soniakeys/set"
 )
 
-func Test(t *testing.T) {
+// show that float64 is not reflexive
+type naiveFEle float64
+
+func (x naiveFEle) Equal(e set.Element) bool {
+	return x == e.(naiveFEle)
+}
+
+func TestN(t *testing.T) {
+	n := naiveFEle(math.NaN())
+	if set.Reflexive(n) {
+		t.Fatal("reflexive NaN")
+	}
+}
+
+// define a float64 element that is reflexive
+type fEle float64
+
+func (x fEle) Equal(e set.Element) bool {
+	y, ok := e.(fEle)
+	if !ok {
+		return false
+	}
+	if math.IsNaN(float64(x)) && math.IsNaN(float64(y)) {
+		return true
+	}
+	if x != y {
+		return false
+	}
+	return math.Signbit(float64(x)) == math.Signbit(float64(y))
+}
+
+func TestQ(t *testing.T) {
+	cf := &quick.Config{MaxCount: 1000}
+	fr := func(x fEle) bool { return set.Reflexive(x) }
+	fs := func(x, y fEle) bool { return set.Symmetric(x, y) }
+	ft := func(x, y, z fEle) bool { return set.Transitive(x, y, z) }
+	if err := quick.Check(fr, cf); err != nil {
+		t.Fatal("reflexive fail:", err)
+	}
+	if err := quick.Check(fs, cf); err != nil {
+		t.Fatal("symmetric fail:", err)
+	}
+	if err := quick.Check(ft, cf); err != nil {
+		t.Fatal("transitive fail:", err)
+	}
+}
+
+func TestC(t *testing.T) {
 	// little tests for code coverage
-	var s set.Set
-	if s.Equal(nil) {
-		t.Fatal("nil") // nil set != nil interface
+	a := fEle(3)
+	b := fEle(3)
+	c := fEle(3)
+	if !set.Transitive(a, b, c) {
+		t.Fatal("transitive fail")
 	}
-	s.AddElement(intEle(3))
-	var s2 set.Set
-	s2.AddElement(intEle(4))
-	if s.Equal(s2) {
-		t.Fatal("neq") // {3) != {4}
+
+	s := set.Set{a}
+	if s.Equal(a) {
+		t.Fatal("set equals element")
 	}
-	if !set.Reflexive(s) {
-		t.Fatal("reflexive")
-	}
-	if !set.Symmetric(s, s2) {
-		t.Fatal("symmetric")
-	}
-	s3 := set.Set{intEle(3)}
-	if !set.Transitive(s, s2, s3) {
-		t.Fatal("3=4?")
-	}
-	s2.RemoveElement(intEle(4))
-	s2.AddElement(intEle(3))
-	if !set.Transitive(s, s2, s3) {
-		t.Fatal("3!=3?")
+	if s.Equal(set.Set{fEle(4)}) {
+		t.Fatal("not equal")
 	}
 }
