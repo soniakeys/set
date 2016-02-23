@@ -123,19 +123,9 @@ func (r *SetM) Clear() {
 // are shared.  That is, this is a shallow copy.
 func (s SetM) Copy() SetM { return append(SetM{}, s...) }
 
-// Contains tests whether the given elements are all in the set.
-//
-// See SetM.HasElement for the non-variadic single element version.
-func (s SetM) Contains(es ...Element) bool {
-	for _, e := range es {
-		if !s.HasElement(e) {
-			return false
-		}
-	}
-	return true
-}
-
 // Difference returns a new set containing elements of s not in t.
+//
+// Called Complement in some packages.
 //
 // The algorithm here starts with an empty set and adds elements of s not
 // in t.
@@ -228,7 +218,7 @@ func (s SetM) Equal(e Element) bool {
 	if len(s) != len(t) {
 		return false
 	}
-	return s.Contains(t...)
+	return s.HasAll(t...)
 }
 
 // Filter returns the subset containing elements e of s where f(e) is true.
@@ -276,12 +266,36 @@ func (s SetM) Flatten2() (f SetM) {
 	return
 }
 
+// HasAll tests whether the given elements are all in the set.
+//
+// Called Contains in some packages.
+//
+// See SetM.HasElement for the non-variadic single element version.
+func (s SetM) HasAll(es ...Element) bool {
+	for _, e := range es {
+		if !s.HasElement(e) {
+			return false
+		}
+	}
+	return true
+}
+
+// HasAll tests whether any of the given elements are in the set.
+func (s SetM) HasAny(es ...Element) bool {
+	for _, e := range es {
+		if s.HasElement(e) {
+			return true
+		}
+	}
+	return false
+}
+
 // HasElement returns true if set s contains element e.
 //
 // Called Contains or Exists in some packages, I left this method with the
-// name from my set package and used the name Contains for the variadic version.
+// name from the Set type.
 //
-// See SetM.Contains for the variadic version.
+// See SetM.HasAll for the variadic version.
 func (s SetM) HasElement(e Element) bool {
 	for _, ex := range s {
 		if e.Equal(ex) {
@@ -340,10 +354,26 @@ func (s SetM) Intersect2(t SetM) SetM {
 	return i
 }
 
+// IsProperSubset returns true if s is a proper subset of t.
+func (s SetM) IsProperSubset(t SetM) bool {
+	if len(s) >= len(t) {
+		return false
+	}
+	for _, e := range s {
+		if !t.HasElement(e) {
+			return false
+		}
+	}
+	return true
+}
+
 // IsSubset returns true if s is a subset of t.
 //
 // A similar predicate named All is in some packages.
 func (s SetM) IsSubset(t SetM) bool {
+	if len(s) == len(t) {
+		return false // fast path
+	}
 	for _, e := range s {
 		if !t.HasElement(e) {
 			return false
@@ -421,7 +451,19 @@ func (s SetM) Map(f func(Element) Element) (m SetM) {
 	return
 }
 
+// Peek returns a random element of s.
+//
+// If s is empty, Peek returns nil, false.
+func (s SetM) Peek() (e Element, ok bool) {
+	if len(s) == 0 {
+		return
+	}
+	return s[rand.Intn(len(s))], true
+}
+
 // Pop returns a random element of r and removes it from r.
+//
+// Called PopAny in some packages.
 //
 // If r is empty, Pop returns nil, false.
 func (r *SetM) Pop() (e Element, ok bool) {

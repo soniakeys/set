@@ -39,9 +39,12 @@
 //
 //   github.com/deckarep/golang-set
 //   github.com/dropbox/godropbox/container/set
-//   gopkg.in/fatih/set.v0
-//   github.com/Workiva/go-datastructures/set
+//   github.com/jchauncey/kubeclient/util/sets
+//   github.com/luci/luci-go/common/stringset
+//   github.com/nlandolfi/set
 //   github.com/shopsmart/set
+//   github.com/Workiva/go-datastructures/set
+//   gopkg.in/fatih/set.v0
 //
 // The result shows lots of capabilities, but shouldn't be taken as anything
 // like an "ultimate" set API.  It's easy to imagine more and more methods
