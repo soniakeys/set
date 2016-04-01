@@ -4,11 +4,11 @@
 // Sets as lists of interfaces.
 //
 // An interface is defined called Element with a single method Equal.
-// This allows generality in element types and general defintions of equality.
+// This allows generality in element types and general definitions of equality.
 // A set type is defined as an Element slice.  You lose O(1) access in
 // comparison to maps for example, but you gain this greater generality.
 //
-// Usually your application will allow something more efficent.  If your
+// Usually your application will allow something more efficient.  If your
 // element types are Go-comparable and the Go definition of equality for
 // the type is what you want, then Go maps are hard to beat as set types.
 // The math/big.Int type makes a servicable bitset in many cases.
