@@ -96,7 +96,7 @@ func (s SetM) Cardinality() int { return len(s) }
 //
 // The type is an element type used for Cartsian products.
 type OrderedPair struct {
-	a, b Element
+	A, B Element
 }
 
 // Equal satisfies the Element interface, allowing OrderedPair values to be
