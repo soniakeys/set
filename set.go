@@ -66,6 +66,18 @@ func Transitive(a, b, c Element) bool {
 // Equal returns false for any pair of elements.
 type Set []Element
 
+// Ok validates that Equal returns false for all pairs of elements.
+func (s Set) Ok() bool {
+	for i, a := range s {
+		for _, b := range s[:i] {
+			if a.Equal(b) {
+				return false
+			}
+		}
+	}
+	return true
+}
+
 // HasElement returns true if set s contains element e.
 //
 // Mathematically, this is the fundamental binary relation defining sets.
@@ -142,7 +154,8 @@ func (s Set) PowerSet() Set {
 	for _, es := range s {
 		var u Set
 		for _, er := range r {
-			u = append(u, append(er.(Set), es))
+			er := er.(Set)
+			u = append(u, append(er[:len(er):len(er)], es))
 		}
 		r = append(r, u...)
 	}

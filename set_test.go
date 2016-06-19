@@ -75,3 +75,17 @@ func TestC(t *testing.T) {
 		t.Fatal("not equal")
 	}
 }
+
+func TestPower(t *testing.T) {
+	// regression test
+	s := set.Set{intEle(1), intEle(2), intEle(3), intEle(4), intEle(5)}
+	ps := s.PowerSet()
+	if !ps.Ok() {
+		t.Fatal("ps not ok")
+	}
+	for _, e := range ps {
+		if !e.(set.Set).Ok() {
+			t.Fatal("ps element not ok")
+		}
+	}
+}

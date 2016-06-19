@@ -28,6 +28,18 @@ func NewSetM(es ...Element) SetM {
 	return n
 }
 
+// Ok validates that Equal returns false for all pairs of elements.
+func (s SetM) Ok() bool {
+	for i, a := range s {
+		for _, b := range s[:i] {
+			if a.Equal(b) {
+				return false
+			}
+		}
+	}
+	return true
+}
+
 // Add adds a single element to a set.
 //
 // Returns true if e was added.  Returns false if e was already present.
@@ -487,7 +499,8 @@ func (s SetM) PowerSet() SetM {
 	for _, es := range s {
 		var u SetM
 		for _, er := range r {
-			u = append(u, append(er.(SetM), es))
+			er := er.(SetM)
+			u = append(u, append(er[:len(er):len(er)], es))
 		}
 		r = append(r, u...)
 	}
